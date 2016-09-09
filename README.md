@@ -26,3 +26,8 @@ mXPlayer.setData(url);
 /** 启动播放*/
 mXPlayer.start();
 ```
+<br>
+![](https://github.com/jiajunhui/XPlayer/raw/master/screenshot/Screenshot_2016-09-09-18-00-52.png)  
+![](https://github.com/jiajunhui/XPlayer/raw/master/screenshot/Screenshot_2016-09-09-18-00-37.png)  
+<br>
+![](https://github.com/jiajunhui/XPlayer/raw/master/screenshot/Screenshot_2016-09-09-18-01-06.png)  
