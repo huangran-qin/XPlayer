@@ -1,8 +1,8 @@
 XPlayer
 ====
-[Demo apk下载](http://fir.im/j2af)
+[Demo apk download](http://fir.im/j2af)
 <br><br>
-[解码库下载](http://pan.baidu.com/share/link?shareid=799230074&uk=3356128450)
+[decode library download](http://pan.baidu.com/share/link?shareid=799230074&uk=3356128450)
 <br><br>
 Contact author , email : junhui_jia@163.com
 use
