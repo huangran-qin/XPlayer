@@ -50,8 +50,9 @@
         android:orientation="horizontal">
         <ImageView
             android:id="@id/player_image_view_play_icon"
-            android:layout_width="40dp"
-            android:layout_height="match_parent"
+            android:layout_width="wrap_content"
+            android:layout_height="16dp"
+            android:paddingLeft="10dp"
             android:scaleType="centerInside"
             android:src="@mipmap/ic_video_player_btn_pause"/>
         <SeekBar
