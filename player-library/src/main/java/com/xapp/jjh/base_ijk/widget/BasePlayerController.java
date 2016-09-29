@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -15,10 +14,8 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
-
 import com.xapp.jjh.base_ijk.R;
 import com.xapp.jjh.base_ijk.inter.IController;
 import com.xapp.jjh.base_ijk.utils.TimeUtil;
@@ -26,18 +23,19 @@ import com.xapp.jjh.base_ijk.utils.TimeUtil;
 /**
  * Created by Taurus on 2016/8/29.
  */
-public abstract class BasePlayController extends FrameLayout implements IController {
+public abstract class BasePlayerController extends FrameLayout implements IController {
 
     private final String TAG = "BasePlayController";
     protected Activity mActivity;
     private View mTopStatusBarView;
-    private ProgressBar mProgressBar;
+    private View mProgressBar;
     private View mPlayControlView;
     private ImageView mIvPlayStateIcon;
     private SeekBar mSeekBar;
-    private TextView mTvPlayTime;
+    private TextView mTvPlayAllTime;
+    private TextView mTvPlayCurrTime;
+    private TextView mTvPlayTotalTime;
     private TextView mTvSystemTime;
-    private TextView mTvLive;
     private View mTouchLayout;
 
     private boolean mGestureEnable = true;
@@ -45,36 +43,43 @@ public abstract class BasePlayController extends FrameLayout implements IControl
     private boolean mTopBarEnable = true;
     private boolean mTapEnable = true;
 
+    private boolean mVolumeGestureEnable = true;
+    private boolean mBrightGestureEnable = true;
+    private boolean mSeekGestureEnable = true;
+
     protected int mWidthPixels;
     protected int mHeightPixels;
 
     protected int mOriginalWidth;
     protected int mOriginalHeight;
+    private View controllerView;
 
-    public BasePlayController(Context context) {
+    private OnControllerStateChangeListener mOnControllerStateChangeListener;
+
+    public BasePlayerController(Context context) {
         super(context);
         initController(context);
     }
 
-    public BasePlayController(Context context, int width, int height){
+    public BasePlayerController(Context context, int width, int height){
         super(context);
         ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(width==-1?ViewGroup.LayoutParams.MATCH_PARENT:width,height);
         setLayoutParams(params);
         initController(context);
     }
 
-    public BasePlayController(Context context, AttributeSet attrs) {
+    public BasePlayerController(Context context, AttributeSet attrs) {
         super(context, attrs);
         initController(context);
     }
 
-    public BasePlayController(Context context, AttributeSet attrs, int defStyleAttr) {
+    public BasePlayerController(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         initController(context);
     }
 
     @SuppressLint("NewApi")
-    public BasePlayController(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+    public BasePlayerController(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
         initController(context);
     }
@@ -128,43 +133,60 @@ public abstract class BasePlayController extends FrameLayout implements IControl
 
     private void initPlayerControl(Context context) {
         LayoutParams params = new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-        View view = View.inflate(context, R.layout.layout_player_controller,null);
-        view.setBackgroundColor(Color.TRANSPARENT);
-        mTopStatusBarView = view.findViewById(R.id.ll_top_status);
-        mProgressBar = (ProgressBar) view.findViewById(R.id.progress_bar);
-        mPlayControlView = view.findViewById(R.id.ll_play_control);
-        mIvPlayStateIcon = (ImageView) view.findViewById(R.id.iv_play_state);
-        mSeekBar = (SeekBar) view.findViewById(R.id.seek_bar);
-        mTvPlayTime = (TextView) view.findViewById(R.id.tv_play_time);
-        mTvSystemTime = (TextView) view.findViewById(R.id.tv_system_time);
-        mTvLive = (TextView) view.findViewById(R.id.tv_live_mark);
-        addView(view,params);
+        controllerView = getControllerView(context);
+        if(controllerView == null)
+            throw new IllegalArgumentException("please set player controller view !");
+        controllerView.setBackgroundColor(Color.TRANSPARENT);
+        mTopStatusBarView = findControllerViewById(R.id.player_top_status_bar_container);
+        mPlayControlView = findControllerViewById(R.id.player_bottom_controller_container);
+        mProgressBar = findControllerViewById(R.id.player_loading_progress_bar);
+        mIvPlayStateIcon = (ImageView) findControllerViewById(R.id.player_image_view_play_icon);
+        mSeekBar = (SeekBar) findControllerViewById(R.id.player_seek_bar);
+        mTvPlayAllTime = (TextView) findControllerViewById(R.id.player_text_view_all_time);
+        mTvPlayCurrTime = (TextView) findControllerViewById(R.id.player_text_view_current_time);
+        mTvPlayTotalTime = (TextView) findControllerViewById(R.id.player_text_view_total_time);
+        mTvSystemTime = (TextView) findControllerViewById(R.id.player_text_view_system_time);
+        addView(controllerView,params);
         addListener();
     }
 
+    public View findControllerViewById(int id){
+        if(controllerView == null || id < 0)
+            return null;
+        return controllerView.findViewById(id);
+    }
+
+    public View getControllerView(Context context) {
+        return View.inflate(context, R.layout.layout_player_controller,null);
+    }
+
     private void addListener() {
-        mIvPlayStateIcon.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onPlayIconClick();
-            }
-        });
-        mSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                onSeekBarProgressChanged(seekBar, progress, fromUser);
-            }
+        if(mIvPlayStateIcon!=null){
+            mIvPlayStateIcon.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    onPlayIconClick();
+                }
+            });
+        }
+        if(mSeekBar!=null){
+            mSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                @Override
+                public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                    onSeekBarProgressChanged(seekBar, progress, fromUser);
+                }
 
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-                onSeekBarStartTrackingTouch(seekBar);
-            }
+                @Override
+                public void onStartTrackingTouch(SeekBar seekBar) {
+                    onSeekBarStartTrackingTouch(seekBar);
+                }
 
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-                onSeekBarStopTrackingTouch(seekBar);
-            }
-        });
+                @Override
+                public void onStopTrackingTouch(SeekBar seekBar) {
+                    onSeekBarStopTrackingTouch(seekBar);
+                }
+            });
+        }
     }
 
     protected void onSeekBarProgressChanged(SeekBar seekBar, int progress, boolean fromUser){
@@ -217,6 +239,21 @@ public abstract class BasePlayController extends FrameLayout implements IControl
     }
 
     @Override
+    public void setVolumeGestureEnable(boolean enable) {
+        this.mVolumeGestureEnable = enable;
+    }
+
+    @Override
+    public void setBrightGestureEnable(boolean enable) {
+        this.mBrightGestureEnable = enable;
+    }
+
+    @Override
+    public void setSeekGestureEnable(boolean enable) {
+        this.mSeekGestureEnable = enable;
+    }
+
+    @Override
     public void setControllerEnable(boolean enable) {
         this.mControllerEnable = enable;
     }
@@ -233,18 +270,31 @@ public abstract class BasePlayController extends FrameLayout implements IControl
 
     @Override
     public void setPlayControlState(boolean state) {
+        if(mPlayControlView == null)
+            return;
         if(state && !mControllerEnable)
             return;
         mPlayControlView.setVisibility(state?View.VISIBLE:View.GONE);
+        if(mOnControllerStateChangeListener!=null){
+            if(state){
+                mOnControllerStateChangeListener.onPlayControllerShow();
+            }else{
+                mOnControllerStateChangeListener.onPlayControllerHidden();
+            }
+        }
     }
 
     @Override
     public boolean isPlayControlShow() {
+        if(mPlayControlView==null)
+            return false;
         return mPlayControlView.getVisibility() == View.VISIBLE;
     }
 
     @Override
     public void setTopStatusBarState(boolean state) {
+        if(mTopStatusBarView == null)
+            return;
         if(state && !mTopBarEnable)
             return;
         if(state)
@@ -254,57 +304,65 @@ public abstract class BasePlayController extends FrameLayout implements IControl
 
     @Override
     public boolean isTopStatusBarShow() {
+        if(mTopStatusBarView == null)
+            return false;
         return mTopStatusBarView.getVisibility() == View.VISIBLE;
     }
 
     @Override
     public void setSystemTime() {
+        if(mTvSystemTime==null)
+            return;
         mTvSystemTime.setText(TimeUtil.getNowTime());
     }
 
     @Override
     public void setLoadingState(boolean state) {
+        if(mProgressBar == null)
+            return;
         mProgressBar.setVisibility(state?View.VISIBLE:View.GONE);
     }
 
     @Override
-    public void setLiveState(boolean state) {
-        mTvLive.setVisibility(state?View.VISIBLE:View.GONE);
-    }
-
-    @Override
     public void setPlayState(boolean isPlaying) {
-        mIvPlayStateIcon.setImageResource(isPlaying?R.mipmap.ic_video_player_btn_pause:R.mipmap.ic_video_player_btn_play);
+        if(mIvPlayStateIcon==null)
+            return;
+        mIvPlayStateIcon.setImageResource(isPlaying?R.mipmap.ic_video_player_btn_pause: R.mipmap.ic_video_player_btn_play);
     }
 
     @Override
     public void setPlayTime(long curr, long total) {
-        mTvPlayTime.setText(TimeUtil.getTime(curr) + "/" + TimeUtil.getTime(total));
-    }
-
-    @Override
-    public void setSeekBarEnable(boolean enable) {
-        mSeekBar.setEnabled(enable);
+        if(mTvPlayAllTime != null){
+            mTvPlayAllTime.setText(TimeUtil.getTime(curr) + "/" + TimeUtil.getTime(total));
+        }else{
+            if(mTvPlayCurrTime!=null){
+                mTvPlayCurrTime.setText(TimeUtil.getTime(curr));
+            }
+            if(mTvPlayTotalTime!=null){
+                mTvPlayTotalTime.setText(TimeUtil.getTime(total));
+            }
+        }
     }
 
     @Override
     public void setSeekMax(int max) {
+        if(mSeekBar == null)
+            return;
         mSeekBar.setMax(max);
     }
 
     @Override
     public void setSeekProgress(int progress) {
+        if(mSeekBar == null)
+            return;
         mSeekBar.setProgress(progress);
     }
 
     @Override
     public void setSeekSecondProgress(int progress) {
+        if(mSeekBar == null)
+            return;
         mSeekBar.setSecondaryProgress(progress);
-    }
-
-    @Override
-    public void setSeekThumb(Drawable drawable){
-        mSeekBar.setThumb(drawable);
     }
 
     @Override
@@ -358,7 +416,7 @@ public abstract class BasePlayController extends FrameLayout implements IControl
         mTouchLayout.findViewById(R.id.app_video_fastForward_box).setVisibility(state?View.VISIBLE:View.GONE);
     }
 
-    public class PlayerGestureListener extends GestureDetector.SimpleOnGestureListener {
+    private class PlayerGestureListener extends GestureDetector.SimpleOnGestureListener {
         private boolean firstTouch;
         private boolean volumeControl;
         private boolean toSeek;
@@ -368,7 +426,7 @@ public abstract class BasePlayController extends FrameLayout implements IControl
             if(mTapEnable){
                 onGestureDoubleTap();
             }
-            return true;
+            return super.onDoubleTap(e);
         }
 
         @Override
@@ -391,13 +449,19 @@ public abstract class BasePlayController extends FrameLayout implements IControl
             }
 
             if (toSeek) {
-                horizontalSlide(-deltaX / getWidth());
+                if(mSeekGestureEnable){
+                    horizontalSlide(-deltaX / getWidth());
+                }
             } else {
                 float percent = deltaY / getHeight();
                 if (volumeControl) {
-                    rightVerticalSlide(percent);
+                    if(mVolumeGestureEnable){
+                        rightVerticalSlide(percent);
+                    }
                 } else{
-                    leftVerticalSlide(percent);
+                    if(mBrightGestureEnable){
+                        leftVerticalSlide(percent);
+                    }
                 }
             }
 
@@ -409,7 +473,16 @@ public abstract class BasePlayController extends FrameLayout implements IControl
             if(mTapEnable){
                 onGestureSingleTapUp();
             }
-            return true;
+            return super.onSingleTapUp(e);
         }
+    }
+
+    public void setOnControllerStateChangeListener(OnControllerStateChangeListener onControllerStateChangeListener) {
+        this.mOnControllerStateChangeListener = onControllerStateChangeListener;
+    }
+
+    public interface OnControllerStateChangeListener{
+        void onPlayControllerShow();
+        void onPlayControllerHidden();
     }
 }

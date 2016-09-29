@@ -2,7 +2,6 @@ package com.xapp.jjh.base_ijk.widget;
 
 import android.content.Context;
 import android.util.AttributeSet;
-
 import com.xapp.jjh.base_ijk.config.DecodeMode;
 import com.xapp.jjh.base_ijk.config.ViewType;
 import com.xapp.jjh.base_ijk.inter.OnErrorListener;
@@ -16,12 +15,12 @@ public abstract class BasePlayer extends BaseBindControllerPlayer {
     private DecodeMode mDecodeMode = DecodeMode.SOFT;
     private ViewType mViewType = ViewType.SURFACEVIEW;
 
-    protected OnPlayerEventListener mOnPlayerEventListener;
-    protected OnErrorListener mOnErrorListener;
+    private OnPlayerEventListener mOnPlayerEventListener;
+    private OnErrorListener mOnErrorListener;
+
+    private boolean gestureDoubleTapEnable = true;
 
     protected int startSeekPos = -1;
-
-    protected boolean isLive = false;
 
     public BasePlayer(Context context) {
         super(context);
@@ -37,10 +36,6 @@ public abstract class BasePlayer extends BaseBindControllerPlayer {
 
     public BasePlayer(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-    }
-
-    public BasePlayer(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-        super(context, attrs, defStyleAttr, defStyleRes);
     }
 
     public DecodeMode getDecodeMode() {
@@ -59,13 +54,12 @@ public abstract class BasePlayer extends BaseBindControllerPlayer {
         this.mViewType = mViewType;
     }
 
-    public boolean isLive() {
-        return isLive;
+    public void setGestureDoubleTapEnable(boolean gestureDoubleTapEnable) {
+        this.gestureDoubleTapEnable = gestureDoubleTapEnable;
     }
 
-    public void setLive(boolean live) {
-        isLive = live;
-        setLiveState(isLive);
+    public boolean isGestureDoubleTapEnable() {
+        return gestureDoubleTapEnable;
     }
 
     public void setOnPlayerEventListener(OnPlayerEventListener onPlayerEventListener) {
@@ -83,6 +77,10 @@ public abstract class BasePlayer extends BaseBindControllerPlayer {
         }
     }
 
+    public boolean isBufferAvailable(){
+        return (getBufferPercentage()*getDuration()/100) >= getCurrentPosition();
+    }
+
     private void updateController(int eventCode) {
         switch (eventCode){
             case OnPlayerEventListener.EVENT_CODE_ON_INTENT_TO_START:
@@ -98,9 +96,10 @@ public abstract class BasePlayer extends BaseBindControllerPlayer {
                 break;
 
             case OnPlayerEventListener.EVENT_CODE_RENDER_START:
-                handleSome();
+                sendPlayingMsg();
                 setLoadingState(false);
                 setPlayState(true);
+                onStartSeek();
                 break;
 
             case OnPlayerEventListener.EVENT_CODE_BUFFERING_START:
@@ -108,7 +107,9 @@ public abstract class BasePlayer extends BaseBindControllerPlayer {
                 break;
 
             case OnPlayerEventListener.EVENT_CODE_BUFFERING_END:
+                sendPlayingMsg();
                 setLoadingState(false);
+                setPlayState(true);
                 break;
 
             case OnPlayerEventListener.EVENT_CODE_SEEK_COMPLETE:
@@ -126,12 +127,18 @@ public abstract class BasePlayer extends BaseBindControllerPlayer {
             case OnPlayerEventListener.EVENT_CODE_PLAY_RESUME:
                 setPlayState(true);
                 break;
+
+            case OnPlayerEventListener.EVENT_CODE_PLAYER_CHANGE_DEFINITION:
+                setLoadingState(true);
+                break;
+
+            case OnPlayerEventListener.EVENT_CODE_PLAYER_SEEK_TO:
+                removePlayingMsg();
+                break;
         }
     }
 
-    private void handleSome() {
-        setSeekBarEnable(!(getDuration() <= 0));
-        sendPlayingMsg();
+    protected void onStartSeek() {
         if(startSeekPos > 0){
             seekTo(startSeekPos);
             startSeekPos = -1;
@@ -152,13 +159,6 @@ public abstract class BasePlayer extends BaseBindControllerPlayer {
                 setLoadingState(false);
                 break;
         }
-    }
-
-    @Override
-    public void horizontalSlide(float percent) {
-        if(getDuration()<=0)
-            return;
-        super.horizontalSlide(percent);
     }
 
     @Override

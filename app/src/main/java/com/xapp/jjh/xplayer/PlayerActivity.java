@@ -7,7 +7,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import com.jiajunhui.xapp.medialoader.loader.MediaLoader;
 import com.xapp.jjh.base_ijk.config.ViewType;
 import com.xapp.jjh.base_ijk.inter.OnErrorListener;

@@ -49,10 +49,6 @@ public class XPlayer extends BasePlayer{
         super(context, attrs, defStyleAttr);
     }
 
-    public XPlayer(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-        super(context, attrs, defStyleAttr, defStyleRes);
-    }
-
     @Override
     protected View getPlayerWidget(Context context) {
         loadLibrary();
@@ -168,7 +164,9 @@ public class XPlayer extends BasePlayer{
     @Override
     public void onGestureDoubleTap() {
         super.onGestureDoubleTap();
-        toggleAspectRatio();
+        if(isGestureDoubleTapEnable()){
+            toggleAspectRatio();
+        }
     }
 
     private void toggleAspectRatio() {

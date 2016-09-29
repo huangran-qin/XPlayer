@@ -5,7 +5,7 @@
     android:background="#00000000">
 
     <LinearLayout
-        android:id="@+id/ll_top_status"
+        android:id="@id/player_top_status_bar_container"
         android:layout_width="match_parent"
         android:layout_height="25dp"
         android:visibility="gone"
@@ -18,7 +18,7 @@
 
         </RelativeLayout>
         <TextView
-            android:id="@+id/tv_system_time"
+            android:id="@id/player_text_view_system_time"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:paddingLeft="10dp"
@@ -30,7 +30,7 @@
     </LinearLayout>
 
     <ProgressBar
-        android:id="@+id/progress_bar"
+        android:id="@id/player_loading_progress_bar"
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:background="#11000000"
@@ -40,7 +40,7 @@
         android:visibility="gone"/>
 
     <LinearLayout
-        android:id="@+id/ll_play_control"
+        android:id="@id/player_bottom_controller_container"
         android:layout_width="match_parent"
         android:layout_height="30dp"
         android:visibility="gone"
@@ -49,13 +49,13 @@
         android:gravity="center_vertical"
         android:orientation="horizontal">
         <ImageView
-            android:id="@+id/iv_play_state"
+            android:id="@id/player_image_view_play_icon"
             android:layout_width="40dp"
             android:layout_height="match_parent"
             android:scaleType="centerInside"
             android:src="@mipmap/ic_video_player_btn_pause"/>
         <SeekBar
-            android:id="@+id/seek_bar"
+            android:id="@id/player_seek_bar"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -65,7 +65,7 @@
             android:progressDrawable="@drawable/style_video_player_video_seekbar"
             android:thumb="@drawable/selector_seek_bar_thumb"/>
         <TextView
-            android:id="@+id/tv_play_time"
+            android:id="@id/player_text_view_all_time"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:paddingRight="10dp"
@@ -74,19 +74,5 @@
             android:gravity="center"
             android:text="00:00:00/00:00:00"/>
     </LinearLayout>
-
-    <TextView
-        android:id="@+id/tv_live_mark"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_alignParentRight="true"
-        android:background="#22000000"
-        android:visibility="gone"
-        android:text="LIVE"
-        android:padding="4dp"
-        android:textSize="12sp"
-        android:textColor="#66ffffff"/>
 
 </RelativeLayout>

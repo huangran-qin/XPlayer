@@ -19,13 +19,12 @@ import com.xapp.jjh.base_ijk.R;
 import com.xapp.jjh.base_ijk.inter.IPlayer;
 import com.xapp.jjh.base_ijk.utils.TimeUtil;
 
-
 /**
  * Created by Taurus on 2016/8/29.
  */
-public abstract class BaseBindControllerPlayer extends BasePlayController implements IPlayer {
+public abstract class BaseBindControllerPlayer extends BasePlayerController implements IPlayer {
 
-    private final String TAG = "BindControllerPlayer";
+    private final String TAG = "_BindControllerPlayer";
     private float brightness=-1;
     private int volume=-1;
     private long newPosition = -1;
@@ -35,6 +34,8 @@ public abstract class BaseBindControllerPlayer extends BasePlayController implem
     private OrientationEventListener orientationEventListener;
     private boolean portrait;
     protected boolean isFullScreen;
+
+    private OnGestureTapListener mOnGestureTapListener;
 
     private final long MSC_TIME_DELAY = 5000;
 
@@ -49,11 +50,16 @@ public abstract class BaseBindControllerPlayer extends BasePlayController implem
             super.handleMessage(msg);
             switch (msg.what){
                 case MSG_PLAYING:
-                    setSeekMax(getDuration());
-                    setSeekProgress(getCurrentPosition());
-                    setSeekSecondProgress(getBufferPercentage()*getDuration()/100);
-                    setPlayTime(getCurrentPosition(),getDuration());
+                    int curr = getCurrentPosition();
+                    int duration = getDuration();
+                    int bufferPercentage = getBufferPercentage();
+                    int bufferPos = bufferPercentage*getDuration()/100;
+                    setSeekMax(duration);
+                    setSeekProgress(curr);
+                    setSeekSecondProgress(bufferPos);
+                    setPlayTime(curr,duration);
                     mHandler.sendEmptyMessageDelayed(MSG_PLAYING,1000);
+                    Log.d(TAG,"duration = " + duration + " currPos = " + curr + " bufferPos = " + bufferPos + " bufferPercentage = " + bufferPercentage);
                     break;
 
                 case MSG_HIDDEN_SLIDE_CONTROL:
@@ -93,8 +99,8 @@ public abstract class BaseBindControllerPlayer extends BasePlayController implem
         super(context, attrs, defStyleAttr);
     }
 
-    public BaseBindControllerPlayer(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-        super(context, attrs, defStyleAttr, defStyleRes);
+    public void setOnGestureTapListener(OnGestureTapListener mOnGestureTapListener) {
+        this.mOnGestureTapListener = mOnGestureTapListener;
     }
 
     @Override
@@ -176,7 +182,7 @@ public abstract class BaseBindControllerPlayer extends BasePlayController implem
 
     private void tryFullScreen(boolean fullScreen) {
         if (mActivity instanceof AppCompatActivity) {
-            ActionBar supportActionBar = ((AppCompatActivity)mActivity).getSupportActionBar();
+            ActionBar supportActionBar = ((AppCompatActivity) mActivity).getSupportActionBar();
             if (supportActionBar != null) {
                 if (fullScreen) {
                     supportActionBar.hide();
@@ -221,21 +227,37 @@ public abstract class BaseBindControllerPlayer extends BasePlayController implem
     protected void onPlayIconClick() {
         super.onPlayIconClick();
         if(isPlaying()){
-            pause();
+            onClickPause();
             setPlayState(false);
         }else{
-            resume();
+            onClickResume();
             setPlayState(true);
         }
         delayHiddenPlayControl();
     }
 
-    protected void sendPlayingMsg(){
-        mHandler.removeMessages(MSG_PLAYING);
-        mHandler.sendEmptyMessage(MSG_PLAYING);
+    protected void onClickPause(){
+        pause();
     }
 
-    private void delayHiddenPlayControl() {
+    protected void onClickResume(){
+        resume();
+    }
+
+    public void removePlayingMsg(){
+        mHandler.removeMessages(MSG_PLAYING);
+    }
+
+    public void sendPlayingMsg(){
+        mHandler.removeMessages(MSG_PLAYING);
+        mHandler.sendEmptyMessageDelayed(MSG_PLAYING,1000);
+    }
+
+    public void removeHiddenPlayControlMsg(){
+        mHandler.removeMessages(MSG_DELAY_HIDDEN_PLAY_CONTROL);
+    }
+
+    public void delayHiddenPlayControl() {
         mHandler.removeMessages(MSG_DELAY_HIDDEN_PLAY_CONTROL);
         mHandler.sendEmptyMessageDelayed(MSG_DELAY_HIDDEN_PLAY_CONTROL,MSC_TIME_DELAY);
     }
@@ -270,9 +292,9 @@ public abstract class BaseBindControllerPlayer extends BasePlayController implem
     protected void onSeekBarStopTrackingTouch(SeekBar seekBar) {
         super.onSeekBarStopTrackingTouch(seekBar);
         int progress = seekBar.getProgress();
+        mHandler.sendEmptyMessage(MSG_PLAYING);
         seekTo(progress);
         delayHiddenPlayControl();
-        mHandler.sendEmptyMessage(MSG_PLAYING);
     }
 
     @Override
@@ -354,12 +376,17 @@ public abstract class BaseBindControllerPlayer extends BasePlayController implem
 
     @Override
     public void onGestureDoubleTap() {
-
+        if(mOnGestureTapListener!=null){
+            mOnGestureTapListener.onGestureDoubleTap();
+        }
     }
 
     @Override
     public void onGestureSingleTapUp() {
         togglePlayControlState();
+        if(mOnGestureTapListener!=null){
+            mOnGestureTapListener.onGestureSingleTap();
+        }
     }
 
     private void togglePlayControlState() {
@@ -440,5 +467,10 @@ public abstract class BaseBindControllerPlayer extends BasePlayController implem
         mHandler.removeMessages(MSG_SLIDE_SEEK);
         mHandler.removeMessages(MSG_HIDDEN_SLIDE_CONTROL);
         mHandler.removeMessages(MSG_DELAY_HIDDEN_PLAY_CONTROL);
+    }
+
+    public interface OnGestureTapListener{
+        void onGestureSingleTap();
+        void onGestureDoubleTap();
     }
 }
