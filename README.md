@@ -2,7 +2,7 @@ XPlayer
 ====
 [Demo apk download](http://fir.im/j2af)
 <br><br>
-[decode library download](http://pan.baidu.com/share/link?shareid=799230074&uk=3356128450)
+[decode library download](http://pan.baidu.com/share/link?shareid=875905087&uk=3356128450)
 <br><br>
 Contact author , email : junhui_jia@163.com
 use
