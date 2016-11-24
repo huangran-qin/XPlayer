@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!--广告倒计时-->
+    <LinearLayout
+        android:id="@id/player_ad_time_counter"
+        android:layout_width="wrap_content"
+        android:layout_height="64px"
+        android:orientation="horizontal"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="40px"
+        android:layout_marginRight="40px"
+        android:paddingLeft="20px"
+        android:paddingRight="20px"
+        android:visibility="gone"
+        android:background="@drawable/shape_ad_time">
+        <TextView
+            android:id="@id/player_text_view_ad_time_counter"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:textSize="30px"
+            android:textColor="#ffffff"
+            android:text=""
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="15px"
+            android:gravity="center"
+            android:textSize="30px"
+            android:textColor="#99ffffff"
+            android:text="秒后结束"
+            />
+    </LinearLayout>
+
+</RelativeLayout>

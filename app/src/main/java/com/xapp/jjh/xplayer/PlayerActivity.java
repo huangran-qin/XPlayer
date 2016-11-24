@@ -7,31 +7,33 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.danikula.videocache.HttpProxyCacheServer;
 import com.jiajunhui.xapp.medialoader.loader.MediaLoader;
-import com.xapp.jjh.base_ijk.config.ViewType;
-import com.xapp.jjh.base_ijk.inter.OnErrorListener;
-import com.xapp.jjh.base_ijk.inter.OnPlayerEventListener;
-import com.xapp.jjh.base_ijk.widget.XPlayer;
 import com.xapp.jjh.xplayer.bean.PlayerMenu;
 import com.xapp.jjh.xui.activity.TopBarActivity;
-import com.xapp.jjh.xui.bean.BaseMenuItem;
-import com.xapp.jjh.xui.inter.MenuType;
-import com.xapp.jjh.xui.inter.OnMenuItemClickListener;
-import java.util.ArrayList;
-import java.util.List;
+import cn.ikan.libs.player.inter.OnErrorListener;
+import cn.ikan.libs.player.inter.OnPlayerEventListener;
+import cn.ikan.libs.player.setting.HttpCacheSetting;
+import cn.ikan.libs.player.setting.ViewType;
+import cn.ikan.libs.player.widget.BaseBindControllerPlayer;
+import cn.ikan.libs.player.widget.BaseExtPlayer;
+import cn.ikan.libs.player.widget.BasePlayerController;
 
 
 public class PlayerActivity extends TopBarActivity implements OnErrorListener, OnPlayerEventListener {
 
     private String TAG = "PlayerActivity";
-    private XPlayer mXPlayer;
+    private BaseExtPlayer mXPlayer;
     private String url;
+    private boolean isLocal;
 
     @Override
     public void parseIntent() {
         super.parseIntent();
         url = getIntent().getStringExtra("path");
         if(TextUtils.isEmpty(url)){
+            isLocal = true;
             url = MediaLoader.getPathFromUri(getApplicationContext(),getIntent().getData());
             Log.d(TAG,"url:" + url);
         }
@@ -66,17 +68,103 @@ public class PlayerActivity extends TopBarActivity implements OnErrorListener, O
         mXPlayer.setDecodeMode(new PlayerMenu().getDecodeMode(decodeMode));
         /** 设置渲染视图类型*/
         mXPlayer.setViewType(ViewType.SURFACEVIEW);
-        /** 是否显示播放帧率等信息*/
-        mXPlayer.showTableLayout();
         /** 播放事件监听*/
         mXPlayer.setOnPlayerEventListener(this);
         /** 播放错误监听*/
         mXPlayer.setOnErrorListener(this);
+        mXPlayer.setOnLoadingTimerChangeListener(new BaseBindControllerPlayer.OnLoadingTimerChangeListener() {
+            @Override
+            public void onLoadingTimeCounter(int seconds) {
+
+            }
+
+            @Override
+            public void onLoadingTimeout() {
+
+            }
+        });
+        mXPlayer.setOnNetWorkStateChangeListener(new BasePlayerController.OnNetWorkStateChangeListener() {
+            @Override
+            public void onNetWorkError() {
+
+            }
+
+            @Override
+            public void onNetWorkConnected() {
+
+            }
+
+            @Override
+            public int getErrorIconResId() {
+                return 0;
+            }
+
+            @Override
+            public String getErrorTipText() {
+                return null;
+            }
+        });
+
+        mXPlayer.setOnControllerStateChangeListener(new BasePlayerController.OnControllerStateChangeListener() {
+            @Override
+            public void onPlayControllerShow() {
+
+            }
+
+            @Override
+            public void onPlayControllerHidden() {
+
+            }
+        });
+
+        mXPlayer.setOnPlayStateChangeListener(new BaseBindControllerPlayer.OnPlayStateChangeListener() {
+            @Override
+            public void onUserPaused() {
+
+            }
+
+            @Override
+            public void onUserResumed() {
+
+            }
+
+            @Override
+            public void onSourceChanged(boolean isFrontVideo) {
+
+            }
+
+            @Override
+            public void onPlayerStop() {
+
+            }
+
+            @Override
+            public void onPlayerRePlay() {
+
+            }
+        });
+
+        mXPlayer.setOnGestureTapListener(new BaseBindControllerPlayer.OnGestureTapListener() {
+            @Override
+            public void onGestureSingleTap() {
+
+            }
+
+            @Override
+            public void onGestureDoubleTap() {
+
+            }
+        });
+
+        HttpProxyCacheServer httpProxyCacheServer = HttpCacheSetting.getHttpProxyCacheServer();
+        if(httpProxyCacheServer!=null && !isLocal){
+            url = httpProxyCacheServer.getProxyUrl(url);
+        }
         /** 播放指定的资源*/
         mXPlayer.setData(url);
         /** 启动播放*/
         mXPlayer.start();
-        setMenuType(MenuType.TEXT,R.string.setting);
+//        setMenuType(MenuType.TEXT,R.string.setting);
         mXPlayer.post(new Runnable() {
             @Override
             public void run() {
@@ -99,24 +187,6 @@ public class PlayerActivity extends TopBarActivity implements OnErrorListener, O
     @Override
     public void onMenuClick() {
         super.onMenuClick();
-        List<PlayerMenu> list = new ArrayList<>();
-        list.add(new PlayerMenu(-1, mXPlayer.isTableLayoutShow()?getString(R.string.play_info_hidden):getString(R.string.play_info_show)));
-        list.add(new PlayerMenu(-1,getString(R.string.video_info)));
-        showMenuList(list, new OnMenuItemClickListener() {
-            @Override
-            public void onMenuItemClick(BaseMenuItem menuItem, int position) {
-                if(position == 0){
-                    if(mXPlayer.isTableLayoutShow()){
-                        mXPlayer.setTableLayoutState(false);
-                    }else{
-                        mXPlayer.setTableLayoutState(true);
-                    }
-                }else if(position == 1){
-                    mXPlayer.showMediaInfo();
-                }
-            }
-        });
-
     }
 
     @Override
@@ -210,14 +280,6 @@ public class PlayerActivity extends TopBarActivity implements OnErrorListener, O
             case OnPlayerEventListener.EVENT_CODE_PLAY_COMPLETE:
                 Log.d(TAG,"EVENT_CODE_PLAY_COMPLETE");
                 showSnackBar("Play Complete",null,null);
-                break;
-
-            case OnPlayerEventListener.EVENT_CODE_PLAYER_DESTROY:
-                Log.d(TAG,"EVENT_CODE_PLAYER_DESTROY");
-                break;
-
-            case OnPlayerEventListener.EVENT_CODE_VIDEO_ROTATION_CHANGED:
-                Log.d(TAG,"EVENT_CODE_VIDEO_ROTATION_CHANGED");
                 break;
         }
     }

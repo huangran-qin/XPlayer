@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">Mix-Player</string>
+    <string name="video_loading_text">全力加载中……</string>
+</resources>

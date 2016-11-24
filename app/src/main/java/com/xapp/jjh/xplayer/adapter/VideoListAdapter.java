@@ -7,13 +7,12 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.jiajunhui.xapp.medialoader.bean.VideoItem;
-import com.xapp.jjh.base_ijk.utils.BytesUtil;
-import com.xapp.jjh.base_ijk.utils.TimeUtil;
 import com.xapp.jjh.xplayer.R;
-import com.xapp.jjh.xplayer.bean.VideoInfo;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import cn.ikan.libs.player.utils.BytesUtil;
+import cn.ikan.libs.player.utils.TimeUtil;
 
 /**
  * Created by Taurus on 16/8/20.

@@ -2,8 +2,9 @@ package com.xapp.jjh.xplayer.bean;
 
 import android.graphics.Color;
 
-import com.xapp.jjh.base_ijk.config.DecodeMode;
 import com.xapp.jjh.xui.bean.BaseMenuItem;
+
+import cn.ikan.libs.player.setting.DecodeMode;
 
 /**
  * Created by Taurus on 2016/8/23.
