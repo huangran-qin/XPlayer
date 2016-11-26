@@ -4,6 +4,18 @@ XPlayer
 <br><br>
 [解码库下载](http://pan.baidu.com/share/link?shareid=875905087&uk=3356128450)
 <br>
+Update Log
+====
+1.调整依赖库架构，利于扩展。<br>
+2.增加边播边缓存功能。<br>
+3.支持播放核心动态变更（多种播放模式下）。<br>
+4.自动代理视频前贴广告播放。<br>
+5.支持IJK硬解码和软解码、EXO-Player、MediaPlayer。<br>
+6.增加对TV的支持。<br>
+7.更加丰富的播放组件定制。<br>
+8.完善错误处理机制。<br>
+9.完善播放组件的状态监听。<br>
+<br>
 use
 ====
 In this App,load phone storage all video files based on [MediaLoader](https://github.com/jiajunhui/MediaLoader)
