@@ -147,13 +147,6 @@ public class MixPlayer extends BaseExtPlayer {
     }
 
     @Override
-    protected void onClickResume() {
-        if(available() && !isPlaying()){
-            mInternalPlayer.onClickResume();
-        }
-    }
-
-    @Override
     public void rePlay(int msc) {
         if(available()){
             if(dataSource!=null && available()){

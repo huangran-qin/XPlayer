@@ -46,7 +46,7 @@ public class HomeActivity extends TopBarActivity implements VideoListAdapter.OnI
     private EditText et_url;
     private TextView tv_play;
 
-    private int decode_mode = PlayerMenu.DECODE_MODE_CODE_HARD;
+    private int decode_mode = PlayerMenu.DECODE_MODE_CODE_SOFT;
 
     private final int MSG_LOAD_OVER = 101;
     private Handler mHandler = new Handler(){
@@ -84,7 +84,7 @@ public class HomeActivity extends TopBarActivity implements VideoListAdapter.OnI
 
     @Override
     public void initData() {
-        setMenuType(MenuType.TEXT,R.string.decode_mode_hard);
+        setMenuType(MenuType.TEXT,R.string.decode_mode_soft);
         setNavigationVisible(false);
         setSwipeBackEnable(false);
         setTopBarTitle("视频列表");
