@@ -24,13 +24,14 @@ import com.xapp.jjh.xui.inter.DialogCallBack;
 import com.xapp.jjh.xui.inter.MenuType;
 import com.xapp.jjh.xui.inter.OnMenuItemClickListener;
 import com.xapp.jjh.xui.inter.PageState;
-import com.xapp.jjh.xui.lib.permissiongen.PermissionFail;
-import com.xapp.jjh.xui.lib.permissiongen.PermissionGen;
-import com.xapp.jjh.xui.lib.permissiongen.PermissionSuccess;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+
+import kr.co.namee.permissiongen.PermissionFail;
+import kr.co.namee.permissiongen.PermissionGen;
+import kr.co.namee.permissiongen.PermissionSuccess;
 
 /**
  * Created by Taurus on 16/8/20.

@@ -12,7 +12,7 @@ public class XPlayerApplication extends XUIApplication {
     @Override
     public void onCreate() {
         super.onCreate();
-        XUIConfig.setXUIRedStyle();
+        XUIConfig.setXUIWhiteStyle();
         initHttpCache();
     }
 

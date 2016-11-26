@@ -7,15 +7,21 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.danikula.videocache.HttpProxyCacheServer;
 import com.jiajunhui.xapp.medialoader.loader.MediaLoader;
+import com.xapp.jjh.base_ijk.config.DebugPrintHelper;
 import com.xapp.jjh.xplayer.bean.PlayerMenu;
 import com.xapp.jjh.xui.activity.TopBarActivity;
+
+import java.io.File;
+
 import cn.ikan.libs.player.inter.OnErrorListener;
 import cn.ikan.libs.player.inter.OnPlayerEventListener;
 import cn.ikan.libs.player.setting.HttpCacheSetting;
 import cn.ikan.libs.player.setting.ViewType;
+import cn.ikan.libs.player.utils.TimeUtil;
 import cn.ikan.libs.player.widget.BaseBindControllerPlayer;
 import cn.ikan.libs.player.widget.BaseExtPlayer;
 import cn.ikan.libs.player.widget.BasePlayerController;
@@ -25,17 +31,23 @@ public class PlayerActivity extends TopBarActivity implements OnErrorListener, O
 
     private String TAG = "PlayerActivity";
     private BaseExtPlayer mXPlayer;
+    private TextView mTvVideoInfo;
+    private TextView mTvReplay;
     private String url;
     private boolean isLocal;
+    private String name;
 
     @Override
     public void parseIntent() {
         super.parseIntent();
         url = getIntent().getStringExtra("path");
         if(TextUtils.isEmpty(url)){
-            isLocal = true;
             url = MediaLoader.getPathFromUri(getApplicationContext(),getIntent().getData());
             Log.d(TAG,"url:" + url);
+        }
+        if(!TextUtils.isEmpty(url)){
+            File file = new File(url);
+            isLocal = file!=null&&file.exists();
         }
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
     }
@@ -46,11 +58,13 @@ public class PlayerActivity extends TopBarActivity implements OnErrorListener, O
     }
 
     public void setListener() {
-
+        mTvReplay.setOnClickListener(this);
     }
 
     public void findViewById() {
         mXPlayer = findView(R.id.player);
+        mTvVideoInfo = findView(R.id.tv_video_info);
+        mTvReplay = findView(R.id.tv_replay);
     }
 
     @Override
@@ -58,7 +72,7 @@ public class PlayerActivity extends TopBarActivity implements OnErrorListener, O
         setSwipeBackEnable(false);
         if(TextUtils.isEmpty(url))
             return;
-        String name = getIntent().getStringExtra("name");
+        name = getIntent().getStringExtra("name");
         if(TextUtils.isEmpty(name)){
             name = getName(url);
         }
@@ -72,6 +86,14 @@ public class PlayerActivity extends TopBarActivity implements OnErrorListener, O
         mXPlayer.setOnPlayerEventListener(this);
         /** 播放错误监听*/
         mXPlayer.setOnErrorListener(this);
+        mXPlayer.setLoadingTimeOut(30);
+        mXPlayer.setOnErrorStateListener(new BasePlayerController.OnErrorStateListener() {
+            @Override
+            public void onErrorViewClick() {
+                mXPlayer.setErrorState(false);
+                mXPlayer.rePlay(0);
+            }
+        });
         mXPlayer.setOnLoadingTimerChangeListener(new BaseBindControllerPlayer.OnLoadingTimerChangeListener() {
             @Override
             public void onLoadingTimeCounter(int seconds) {
@@ -80,8 +102,9 @@ public class PlayerActivity extends TopBarActivity implements OnErrorListener, O
 
             @Override
             public void onLoadingTimeout() {
-
+                mXPlayer.setErrorState(true,"连接超时啦！");
             }
+
         });
         mXPlayer.setOnNetWorkStateChangeListener(new BasePlayerController.OnNetWorkStateChangeListener() {
             @Override
@@ -238,8 +261,8 @@ public class PlayerActivity extends TopBarActivity implements OnErrorListener, O
 
     @Override
     public void onError(int errorCode) {
-        Log.d(TAG,"-------------------ERROR !!!--------------------");
         showSnackBar("occur error !",null,null);
+        mXPlayer.setErrorState(true,"出错了");
     }
 
     @Override
@@ -255,6 +278,7 @@ public class PlayerActivity extends TopBarActivity implements OnErrorListener, O
 
             case OnPlayerEventListener.EVENT_CODE_RENDER_START:
                 Log.d(TAG,"EVENT_CODE_RENDER_START");
+                updateVideoInfo();
                 break;
 
             case OnPlayerEventListener.EVENT_CODE_BUFFERING_START:
@@ -280,7 +304,38 @@ public class PlayerActivity extends TopBarActivity implements OnErrorListener, O
             case OnPlayerEventListener.EVENT_CODE_PLAY_COMPLETE:
                 Log.d(TAG,"EVENT_CODE_PLAY_COMPLETE");
                 showSnackBar("Play Complete",null,null);
+                onPlayComplete();
                 break;
         }
+    }
+
+    private void onPlayComplete() {
+        mXPlayer.post(new Runnable() {
+            @Override
+            public void run() {
+                mXPlayer.stop();
+                findView(R.id.rl_replay).setVisibility(View.VISIBLE);
+            }
+        });
+    }
+
+    @Override
+    public void onClick(View v) {
+        super.onClick(v);
+        switch (v.getId()){
+            case R.id.tv_replay:
+                mXPlayer.rePlay(0);
+                findView(R.id.rl_replay).setVisibility(View.GONE);
+                break;
+        }
+    }
+
+    private void updateVideoInfo() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("[视频名称]：").append(name).append("\n");
+        sb.append("[视频时长]：").append(TimeUtil.getTime(mXPlayer.getDuration())).append("\n");
+        sb.append("[播放核心]：").append(DebugPrintHelper.getPlayerDebugStr(mXPlayer.getPlayerType())).append("\n");
+        sb.append("[解码模式]：").append(mXPlayer.getDecodeMode().getValue()).append("\n");
+        mTvVideoInfo.setText(sb.toString());
     }
 }

@@ -67,6 +67,8 @@ public abstract class BasePlayerController extends FrameLayout implements IContr
 
     protected int mPlayerType = PlayerType.PLAYER_TYPE_IJK;
 
+    protected OnErrorStateListener mOnErrorStateListener;
+
     public BasePlayerController(Context context) {
         super(context);
         initController(context);
@@ -326,9 +328,18 @@ public abstract class BasePlayerController extends FrameLayout implements IContr
         return isExtContainView(mNetWorkStateView);
     }
 
+    public void setOnErrorStateListener(OnErrorStateListener mOnErrorStateListener) {
+        this.mOnErrorStateListener = mOnErrorStateListener;
+    }
+
     @Override
-    public void setNetErrorState(boolean state){
+    public void setErrorState(boolean state){
+        setErrorState(state,null);
+    }
+
+    public void setErrorState(boolean state, String tips){
         if(mNetWorkStateView!=null){
+            mNetWorkStateView.setOnClickListener(null);
             removeExtendView(mNetWorkStateView);
         }
         if(!state){
@@ -348,7 +359,22 @@ public abstract class BasePlayerController extends FrameLayout implements IContr
                 ((TextView)mNetWorkStateView.findViewById(R.id.player_net_work_state_text_view_text)).setText(errorTipText);
             }
         }
+        if(!TextUtils.isEmpty(tips)){
+            ((TextView)mNetWorkStateView.findViewById(R.id.player_net_work_state_text_view_text)).setText(tips);
+        }
+        mNetWorkStateView.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onErrorViewClick();
+            }
+        });
         addExtendView(mNetWorkStateView,new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+    }
+
+    protected void onErrorViewClick(){
+        if(mOnErrorStateListener!=null){
+            mOnErrorStateListener.onErrorViewClick();
+        }
     }
 
     protected View getNetWorkStateView(){
@@ -637,5 +663,10 @@ public abstract class BasePlayerController extends FrameLayout implements IContr
         int getErrorIconResId();
         /** use this method , you can custom the tips text by string resource id*/
         String getErrorTipText();
+    }
+
+    public interface OnErrorStateListener{
+        /** when error view click*/
+        void onErrorViewClick();
     }
 }

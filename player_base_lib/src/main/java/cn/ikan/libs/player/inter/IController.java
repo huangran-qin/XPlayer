@@ -14,7 +14,7 @@ public interface IController {
     void setSeekGestureEnable(boolean enable);
     /** Set play controller is available*/
     void setControllerEnable(boolean enable);
-    void setNetErrorState(boolean state);
+    void setErrorState(boolean state);
     void setTopStatusBarEnable(boolean enable);
     void setTapEnable(boolean enable);
     /** Set play controller status, display or hide*/
