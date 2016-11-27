@@ -2,6 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="#00000000">
 
     <LinearLayout
@@ -9,6 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="25dp"
         android:visibility="gone"
+        android:gravity="center_vertical"
         android:background="@color/play_control_alpha_black"
         android:orientation="horizontal">
         <RelativeLayout
@@ -27,6 +29,18 @@
             android:textColor="#ffffff"
             android:gravity="center"
             android:text="10:08"/>
+        <cn.ikan.libs.player.widget.BatteryView
+            android:id="@id/player_view_battery_value"
+            android:layout_width="20dp"
+            android:layout_height="10dp"
+            android:layout_marginRight="10dp"
+            app:border_width="2dp"
+            app:border_color="#ffffff"
+            app:head_orientation="left"
+            app:show_type="fill"
+            app:progress_color="#ffffff"
+            app:number_text_size="12sp"
+            />
     </LinearLayout>
 
     <ProgressBar

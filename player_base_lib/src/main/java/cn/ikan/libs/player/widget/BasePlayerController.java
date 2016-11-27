@@ -2,7 +2,10 @@ package cn.ikan.libs.player.widget;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Color;
 import android.text.TextUtils;
 import android.util.AttributeSet;
@@ -39,6 +42,7 @@ public abstract class BasePlayerController extends FrameLayout implements IContr
     private TextView mTvPlayCurrTime;
     private TextView mTvPlayTotalTime;
     private TextView mTvSystemTime;
+    private BatteryView mBatteryValue;
     private View mTouchLayout;
 
     private boolean mGestureEnable = true;
@@ -68,6 +72,7 @@ public abstract class BasePlayerController extends FrameLayout implements IContr
     protected int mPlayerType = PlayerType.PLAYER_TYPE_IJK;
 
     protected OnErrorStateListener mOnErrorStateListener;
+    private BatteryReceiver batteryReceiver;
 
     public BasePlayerController(Context context) {
         super(context);
@@ -207,8 +212,46 @@ public abstract class BasePlayerController extends FrameLayout implements IContr
         mTvPlayCurrTime = (TextView) findControllerViewById(R.id.player_text_view_current_time);
         mTvPlayTotalTime = (TextView) findControllerViewById(R.id.player_text_view_total_time);
         mTvSystemTime = (TextView) findControllerViewById(R.id.player_text_view_system_time);
+        mBatteryValue = (BatteryView) findControllerViewById(R.id.player_view_battery_value);
+        if(mBatteryValue!=null){
+            initBatteryReceiver(context);
+        }
         addView(controllerView,params);
         addListener();
+    }
+
+    private void initBatteryReceiver(Context context) {
+        IntentFilter filter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
+        batteryReceiver = new BatteryReceiver();
+        if(context!=null){
+            context.registerReceiver(batteryReceiver,filter);
+        }
+    }
+
+    protected void unRegisterBatteryReceiver(){
+        if(batteryReceiver!=null && mContext!=null){
+            try {
+                mContext.unregisterReceiver(batteryReceiver);
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public class BatteryReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            int current = intent.getExtras().getInt("level");// 获得当前电量
+            int total = intent.getExtras().getInt("scale");// 获得总电量
+            int percent = current * 100 / total;
+            setBatteryValue(percent);
+        }
+    }
+
+    public void setBatteryValue(int value){
+        if(mBatteryValue!=null){
+            mBatteryValue.setBatteryValue(value);
+        }
     }
 
     public View findControllerViewById(int id){

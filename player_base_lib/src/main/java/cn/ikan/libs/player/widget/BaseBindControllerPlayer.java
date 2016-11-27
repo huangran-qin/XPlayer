@@ -700,6 +700,7 @@ public abstract class BaseBindControllerPlayer extends BasePlayerController impl
         }
         abandonAudioManagerFocus();
         afChangeListener = null;
+        unRegisterBatteryReceiver();
         try {
             finalize();
         }catch (Throwable e) {

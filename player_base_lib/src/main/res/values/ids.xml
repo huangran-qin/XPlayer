@@ -4,6 +4,7 @@
     <item name="player_text_view_total_time" type="id"/>
     <item name="player_text_view_all_time" type="id"/>
     <item name="player_text_view_system_time" type="id"/>
+    <item name="player_view_battery_value" type="id"/>
     <item name="player_seek_bar" type="id"/>
     <item name="player_loading_progress_bar" type="id"/>
     <item name="player_image_view_play_icon" type="id"/>
