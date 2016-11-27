@@ -16,6 +16,10 @@ Update Log
 8.完善错误处理机制。<br>
 9.完善播放组件的状态监听。<br>
 <br>
+Structure
+====
+![image](https://github.com/jiajunhui/XPlayer/raw/master/screenshot/xplayer_struct.png)
+<br>
 Screenshot
 ====
 ![image](https://github.com/jiajunhui/XPlayer/raw/master/screenshot/screenshot01.png)
