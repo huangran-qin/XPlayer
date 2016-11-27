@@ -163,4 +163,4 @@ mXPlayer.setOnGestureTapListener(new BaseBindControllerPlayer.OnGestureTapListen
 ```
 <br>
 <br>
-有问题请联系 email : junhui_jia@163.com
+有问题请联系 <br>email : junhui_jia@163.com<br>QQ:309812983
