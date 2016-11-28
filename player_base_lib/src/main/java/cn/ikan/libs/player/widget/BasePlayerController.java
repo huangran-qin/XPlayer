@@ -139,13 +139,13 @@ public abstract class BasePlayerController extends FrameLayout implements IContr
         addView(mCustomLayout,new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
     }
 
-    protected void addExtendView(View view, ViewGroup.LayoutParams params) {
+    public void addExtendView(View view, ViewGroup.LayoutParams params) {
         if(mCustomLayout!=null){
             mCustomLayout.addView(view,params);
         }
     }
 
-    protected void removeExtendView(View view) {
+    public void removeExtendView(View view) {
         if(mCustomLayout!=null){
             mCustomLayout.removeView(view);
         }

@@ -32,10 +32,10 @@ public class PlayerActivity extends TopBarActivity implements OnErrorListener, O
     private String TAG = "PlayerActivity";
     private BaseExtPlayer mXPlayer;
     private TextView mTvVideoInfo;
-    private TextView mTvReplay;
     private String url;
     private boolean isLocal;
     private String name;
+    private View mReplayView;
 
     @Override
     public void parseIntent() {
@@ -58,13 +58,12 @@ public class PlayerActivity extends TopBarActivity implements OnErrorListener, O
     }
 
     public void setListener() {
-        mTvReplay.setOnClickListener(this);
+
     }
 
     public void findViewById() {
         mXPlayer = findView(R.id.player);
         mTvVideoInfo = findView(R.id.tv_video_info);
-        mTvReplay = findView(R.id.tv_replay);
     }
 
     @Override
@@ -314,20 +313,30 @@ public class PlayerActivity extends TopBarActivity implements OnErrorListener, O
             @Override
             public void run() {
                 mXPlayer.stop();
-                findView(R.id.rl_replay).setVisibility(View.VISIBLE);
+                if(mReplayView!=null){
+                    mReplayView.setVisibility(View.VISIBLE);
+                }else{
+                    mXPlayer.addExtendView(getRePlayView(),new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+                }
+                mReplayView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        mXPlayer.rePlay(0);
+                        mReplayView.setVisibility(View.GONE);
+                    }
+                });
             }
         });
+    }
+
+    private View getRePlayView(){
+        mReplayView = View.inflate(getApplicationContext(), R.layout.layout_replay,null);
+        return mReplayView;
     }
 
     @Override
     public void onClick(View v) {
         super.onClick(v);
-        switch (v.getId()){
-            case R.id.tv_replay:
-                mXPlayer.rePlay(0);
-                findView(R.id.rl_replay).setVisibility(View.GONE);
-                break;
-        }
     }
 
     private void updateVideoInfo() {
