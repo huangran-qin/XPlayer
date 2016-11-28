@@ -17,6 +17,7 @@ import cn.ikan.libs.player.setting.ViewType;
 import cn.ikan.libs.player.widget.BaseSinglePlayer;
 import ijk_widget.IRenderView;
 import ijk_widget.IjkVideoView;
+import ijk_widget.Settings;
 import tv.danmaku.ijk.media.player.IMediaPlayer;
 import tv.danmaku.ijk.media.player.IjkMediaPlayer;
 
@@ -157,6 +158,8 @@ public class IJKSinglePlayer extends BaseSinglePlayer {
             }else if(getDecodeMode() == DecodeMode.HARD){
                 mVideoView.setUsingAndroidPlayer(false);
                 mVideoView.setUsingMediaCodec(true);
+            }else if(getDecodeMode() == DecodeMode.EXO_PLAYER){
+                mVideoView.setPlayerType(Settings.PV_PLAYER__IjkExoMediaPlayer);
             }
         }
     }
