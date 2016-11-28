@@ -31,8 +31,8 @@
             android:text="10:08"/>
         <cn.ikan.libs.player.widget.BatteryView
             android:id="@id/player_view_battery_value"
-            android:layout_width="20dp"
-            android:layout_height="10dp"
+            android:layout_width="22dp"
+            android:layout_height="11dp"
             android:layout_marginRight="10dp"
             app:border_width="2dp"
             app:border_color="#ffffff"
