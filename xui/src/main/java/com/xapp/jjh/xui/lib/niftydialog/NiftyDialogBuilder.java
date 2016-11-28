@@ -48,8 +48,6 @@ public class NiftyDialogBuilder extends Dialog implements DialogInterface {
 
     private final String defMsgColor = "#000";
 
-    private final String defDialogColor = "#FFE74C3C";
-
     private static Context tmpContext;
 
     private Effectstype type = null;
@@ -218,7 +216,6 @@ public class NiftyDialogBuilder extends Dialog implements DialogInterface {
         mTitle.setTextColor(Color.parseColor(defTextColor));
         mDivider.setBackgroundColor(Color.parseColor(defDividerColor));
         mMessage.setTextColor(Color.parseColor(defMsgColor));
-        mLinearLayoutView.setBackgroundColor(Color.parseColor(defDialogColor));
     }
 
     public NiftyDialogBuilder withDividerColor(String colorString) {

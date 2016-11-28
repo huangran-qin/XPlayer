@@ -1,1 +1,1 @@
-include ':app', ':ijkplayer-java', ':player-routing', ':xui', ':player_base_lib', ':ijkplayer'
+include ':app', ':ijkplayer-java', ':player-routing', ':player_base_lib', ':ijkplayer', ':xui'

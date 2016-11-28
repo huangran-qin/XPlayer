@@ -84,7 +84,7 @@
         <item name="android:windowContentOverlay">@null</item>
         <item name="android:windowIsTranslucent">true</item>
         <item name="android:backgroundDimEnabled">false</item>
-        <item name="android:backgroundDimAmount">0.4</item>
+        <item name="android:backgroundDimAmount">0.2</item>
     </style>
 
     <style name="dialog_untran" parent="dialog_tran">

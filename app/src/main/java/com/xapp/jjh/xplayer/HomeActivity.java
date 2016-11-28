@@ -24,13 +24,14 @@ import com.xapp.jjh.xui.inter.DialogCallBack;
 import com.xapp.jjh.xui.inter.MenuType;
 import com.xapp.jjh.xui.inter.OnMenuItemClickListener;
 import com.xapp.jjh.xui.inter.PageState;
-import com.xapp.jjh.xui.lib.permissiongen.PermissionFail;
-import com.xapp.jjh.xui.lib.permissiongen.PermissionGen;
-import com.xapp.jjh.xui.lib.permissiongen.PermissionSuccess;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+
+import kr.co.namee.permissiongen.PermissionFail;
+import kr.co.namee.permissiongen.PermissionGen;
+import kr.co.namee.permissiongen.PermissionSuccess;
 
 /**
  * Created by Taurus on 16/8/20.
@@ -45,7 +46,7 @@ public class HomeActivity extends TopBarActivity implements VideoListAdapter.OnI
     private EditText et_url;
     private TextView tv_play;
 
-    private int decode_mode = PlayerMenu.DECODE_MODE_CODE_HARD;
+    private int decode_mode = PlayerMenu.DECODE_MODE_CODE_SOFT;
 
     private final int MSG_LOAD_OVER = 101;
     private Handler mHandler = new Handler(){
@@ -83,7 +84,7 @@ public class HomeActivity extends TopBarActivity implements VideoListAdapter.OnI
 
     @Override
     public void initData() {
-        setMenuType(MenuType.TEXT,R.string.decode_mode_hard);
+        setMenuType(MenuType.TEXT,R.string.decode_mode_soft);
         setNavigationVisible(false);
         setSwipeBackEnable(false);
         setTopBarTitle("视频列表");

@@ -208,7 +208,6 @@ public abstract class BaseBindControllerPlayer extends BasePlayerController impl
     protected void bindController(Context context) {
         initAudioManager(context);
         initOrientationListener();
-        isFullScreen = mActivity.getRequestedOrientation()!=ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
     }
 
     private void initAudioManager(Context context) {
@@ -429,6 +428,7 @@ public abstract class BaseBindControllerPlayer extends BasePlayerController impl
     @Override
     protected void showLoading() {
         super.showLoading();
+        removeDelayLoadingMsg();
         mLoadingTimerCount = 0;
         sendLoadingTimerMsg();
     }
@@ -436,6 +436,7 @@ public abstract class BaseBindControllerPlayer extends BasePlayerController impl
     @Override
     protected void hiddenLoading() {
         super.hiddenLoading();
+        removeDelayLoadingMsg();
         mLoadingTimerCount = 0;
         removeLoadingTimerMsg();
     }
@@ -699,6 +700,7 @@ public abstract class BaseBindControllerPlayer extends BasePlayerController impl
         }
         abandonAudioManagerFocus();
         afChangeListener = null;
+        unRegisterBatteryReceiver();
         try {
             finalize();
         }catch (Throwable e) {

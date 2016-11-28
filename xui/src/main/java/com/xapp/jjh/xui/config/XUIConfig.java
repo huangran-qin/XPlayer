@@ -169,7 +169,7 @@ public class XUIConfig {
 
     public static void setXUIWhiteStyle(){
         setUseStatusBarDarkMode(true);
-        setTopBarNavigationIcon(R.mipmap.back_icon_dark);
+        setTopBarNavigationIcon(R.mipmap.icon_back_dark);
         setTopBarTitleTextColor(R.color.light_black);
         setTopBarMenuTextColor(R.color.light_black);
         setTopBarMenuTextSize(12);

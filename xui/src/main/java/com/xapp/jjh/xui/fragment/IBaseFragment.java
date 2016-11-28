@@ -67,7 +67,8 @@ public abstract class IBaseFragment extends Fragment implements View.OnClickList
     private View packageLayout(View userView){
         mUserView = userView;
         FrameLayout root = new FrameLayout(mContext);
-        root.addView(userView);
+        root.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        root.addView(userView,new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         mLoadingContainer = new FrameLayout(mContext);
         mLoadingContainer.setLayoutParams(params);
         mLoadingContainer.setBackgroundColor(Color.TRANSPARENT);

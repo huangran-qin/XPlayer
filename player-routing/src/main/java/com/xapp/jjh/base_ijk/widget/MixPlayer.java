@@ -87,7 +87,7 @@ public class MixPlayer extends BaseExtPlayer {
             }
             this.dataSource = data;
             mInternalPlayer.setData(data);
-            onPlayerEvent(OnPlayerEventListener.EVENT_CODE_ON_INTENT_TO_START);
+            onPlayerEvent(OnPlayerEventListener.EVENT_CODE_PLAYER_ON_SET_DATA_SOURCE);
         }
     }
 
@@ -143,13 +143,6 @@ public class MixPlayer extends BaseExtPlayer {
             if(mOnPlayStateChangeListener!=null){
                 mOnPlayStateChangeListener.onPlayerStop();
             }
-        }
-    }
-
-    @Override
-    protected void onClickResume() {
-        if(available() && !isPlaying()){
-            mInternalPlayer.onClickResume();
         }
     }
 

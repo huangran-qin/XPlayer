@@ -225,7 +225,6 @@ public class IJKSinglePlayer extends BaseSinglePlayer {
         if(available() && isPlaying()){
             mVideoView.pause();
             mStatus = STATUS_PAUSE;
-            onPlayerEvent(OnPlayerEventListener.EVENT_CODE_PLAY_PAUSE);
         }
     }
 
@@ -234,7 +233,6 @@ public class IJKSinglePlayer extends BaseSinglePlayer {
         if(available() && mStatus == STATUS_PAUSE){
             mVideoView.start();
             mStatus = STATUS_PLAYING;
-            onPlayerEvent(OnPlayerEventListener.EVENT_CODE_PLAY_RESUME);
         }
     }
 
@@ -242,7 +240,6 @@ public class IJKSinglePlayer extends BaseSinglePlayer {
     public void seekTo(int msc) {
         if(available()){
             mVideoView.seekTo(msc);
-            onPlayerEvent(OnPlayerEventListener.EVENT_CODE_PLAYER_SEEK_TO);
         }
     }
 
@@ -307,7 +304,7 @@ public class IJKSinglePlayer extends BaseSinglePlayer {
             if(mVideoView!=null){
                 mVideoView.stopPlayback();
                 mVideoView.release(true);
-                mVideoView = null;
+                destroyDrawingCache();
             }
         }catch (Exception e){
             e.printStackTrace();

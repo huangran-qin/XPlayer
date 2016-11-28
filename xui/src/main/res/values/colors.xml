@@ -17,13 +17,13 @@
 
     <color name="load_text">#666666</color>
 
-    <color name="dialog_bg">#dddddd</color>
+    <color name="dialog_bg">#FFFFFF</color>
 
 
     <color name="dialog_btn_default">@color/dialog_bg</color>
     <color name="dialog_btn_pressed">#cccccc</color>
-    <color name="dialog_btn_text_default">#1A81FB</color>
-    <color name="dialog_btn_text_pressed">#1A81FB</color>
+    <color name="dialog_btn_text_default">#4094f9</color>
+    <color name="dialog_btn_text_pressed">#4094f9</color>
     <color name="dialog_line">#33000000</color>
 
 

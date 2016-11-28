@@ -205,6 +205,8 @@ public abstract class BasePlayer extends BaseBindControllerPlayer {
 
             case OnPlayerEventListener.EVENT_CODE_PLAYER_ON_SET_DATA_SOURCE:
                 removePlayingMsg();
+                resetPlayTime();
+                resetSeekBar();
                 break;
 
             case OnPlayerEventListener.EVENT_CODE_PLAYER_ON_STOP:
@@ -290,6 +292,10 @@ public abstract class BasePlayer extends BaseBindControllerPlayer {
         mNetError = false;
     }
 
+    /**
+     * change player core , such as ijkplayer or other player.
+     * @param type
+     */
     public void updatePlayerType(int type){
         boolean needNotify = this.mPlayerType!=type;
         this.mPlayerType = type;
