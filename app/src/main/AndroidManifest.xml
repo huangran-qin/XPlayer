@@ -36,6 +36,12 @@
             android:screenOrientation="sensor">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW"/>
+                <data android:mimeType="video/*" android:scheme="http"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
                 <data android:mimeType="video/*" />
                 <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>

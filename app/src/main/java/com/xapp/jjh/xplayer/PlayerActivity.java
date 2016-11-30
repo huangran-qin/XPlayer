@@ -41,13 +41,14 @@ public class PlayerActivity extends TopBarActivity implements OnErrorListener, O
     public void parseIntent() {
         super.parseIntent();
         url = getIntent().getStringExtra("path");
-        if(TextUtils.isEmpty(url)){
-            url = MediaLoader.getPathFromUri(getApplicationContext(),getIntent().getData());
-            Log.d(TAG,"url:" + url);
-        }
         if(!TextUtils.isEmpty(url)){
             File file = new File(url);
             isLocal = file!=null&&file.exists();
+        }
+        if(TextUtils.isEmpty(url)){
+            url = MediaLoader.getPathFromUri(getApplicationContext(),getIntent().getData());
+            isLocal = true;
+            Log.d(TAG,"url:" + url);
         }
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
     }
